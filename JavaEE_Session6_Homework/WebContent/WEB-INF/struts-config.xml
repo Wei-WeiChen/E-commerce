@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE struts-config PUBLIC
+          "-//Apache Software Foundation//DTD Struts Configuration 1.1//EN"
+          "http://jakarta.apache.org/struts/dtds/struts-config_1_1.dtd">
+<struts-config>
+	<form-beans>
+		<form-bean name="BackendformData" type="com.training.formbean.BackendformData"/>	
+		<form-bean name="FrontendformData" type="com.training.formbean.FrontendformData"/>	
+	</form-beans>
+	
+    <action-mappings>
+		<!--後端的Action -->
+        <action path="/BackendAction" type="com.training.action.BackendAction"
+        		parameter="action" name="BackendformData">
+			
+			<!--商品列表 -->
+            <forward name="goodListView" path="/WEB-INF/Back/VM_Backend_GoodsList.jsp" />
+			
+			<!--商品維護 -->
+			<!--更新商品須存到後端資料庫，使用redirect避免重複提交(中斷請求) -->
+			<!--因為執行了中斷請求redirect，所以必須重導到View畫面 -->
+			<forward name="updateGoods" path="BackendAction.do?action=updateGoodsView" redirect="true"/>
+			<forward name="updateGoodsView" path="/WEB-INF/Back/VM_Backend_GoodsReplenishment.jsp" />
+			
+			<!--商品新增 -->
+			<!--更新商品須存到後端資料庫，使用redirect避免重複提交(中斷請求) -->
+			<!--因為執行了中斷請求redirect，所以必須重導到View畫面 -->
+			<forward name="createGoods" path="BackendAction.do?action=createGoodsView" redirect="true"/>
+			<forward name="createGoodsView" path="/WEB-INF/Back/VM_Backend_GoodsCreate.jsp" />
+			
+			<!--銷售報表 -->
+			<forward name="goodsSaleReportView" path="/WEB-INF/Back/VM_Backend_GoodsSaleReport.jsp" />
+        </action>
+        
+        <!--前端的Action -->
+        <action path="/FrontendAction" type="com.training.action.FrontendAction"
+        		parameter="action" name="FrontendformData">
+        	<forward name="VendingMachine" path="FrontendAction.do?action=buyGoodsView" redirect="true"/>
+        	<forward name="buyGoodsView" path="/WEB-INF/Front/VendingMachine.jsp" />
+        	<forward name="initial" path="/FrontendAction.do?action=buyGoodsView" redirect="true"/>	
+        </action>
+        
+        <!--登入的Action -->
+        <action path="/LoginAction" type="com.training.action.LoginAction" parameter="action">
+        	<!-- 登入成功進入操作首頁 -->
+        	<forward name="success" path="/FrontendAction.do?action=initial" redirect="true"/>
+        	<!-- 登入失敗重回登入頁面 -->
+			<forward name="fail" path="/LoginAccount.jsp" />
+        </action>
+        		
+    </action-mappings>
+</struts-config>

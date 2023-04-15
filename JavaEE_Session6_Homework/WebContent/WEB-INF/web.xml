@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
+    <servlet>
+        <servlet-name>action</servlet-name>
+        <servlet-class>org.apache.struts.action.ActionServlet</servlet-class>
+<!-- 以下設置為 struts 設定檔預設路徑及檔名，若無變動則可省略不設置，設置多個設定檔中間以逗點分隔  -->
+        <init-param>
+            <param-name>config</param-name>
+            <param-value>/WEB-INF/struts-config.xml</param-value>
+        </init-param>
+        
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>action</servlet-name>
+        <url-pattern>*.do</url-pattern>
+    </servlet-mapping>
+
+    
+	<filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>com.training.filter.CharacterEncodingFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>LoginCheckFilter</filter-name>
+        <filter-class>com.training.filter.LoginCheckFilter</filter-class>
+    </filter>
+    
+    <filter-mapping>
+        <filter-name>LoginCheckFilter</filter-name>
+<!-- 只過濾struts請求 -->
+        <url-pattern>*.do</url-pattern>
+    </filter-mapping>
+    
+    <session-config>
+    	<session-timeout>30</session-timeout>
+    </session-config>
+</web-app>
