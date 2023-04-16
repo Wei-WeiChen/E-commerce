@@ -81,7 +81,7 @@ public class FrontEndService {
 		for(int i=0;i<listSQL.size();i++){
 			//商品下架不能買
 			//庫存小於0不給買
-			if(listSQL.get(i).getStatus().equals(0)){
+			if("1".equals(listSQL.get(i).getStatus())){
 				if(listSQL.get(i).getGoodsQuantity()>0){
 					if(listSQL.get(i).getGoodsQuantity() > buyGoodsList.get(i).getGoodsQuantity()){
 						listSQL.get(i).setGoodsQuantity(buyGoodsList.get(i).getGoodsQuantity());
@@ -106,6 +106,7 @@ public class FrontEndService {
 		List<Goods> goodsList = backEndService.queryGoodById(buyGoodsList);
 		for(int i=0; i<buyGoodsList.size(); i++){
 			buyGoodsList.get(i).setGoodsPrice(goodsList.get(i).getGoodsPrice());
+			buyGoodsList.get(i).setGoodsName(goodsList.get(i).getGoodsName());
 		}
 		return buyGoodsList;
 	}
@@ -116,7 +117,7 @@ public class FrontEndService {
 		boolean result = false;
 		for(int i= 0;i < buyGoods.size();i++){
 			buyGoods.get(i).setGoodsQuantity(buyGoods.get(i).getGoodsQuantity() - buyGoodsList.get(i).getGoodsQuantity());
-			result = frontEndDao.batchUpdateGoodsQuantity(buyGoodsList);
+			result = frontEndDao.batchUpdateGoodsQuantity(buyGoods);
 		}
 		
 		return result;

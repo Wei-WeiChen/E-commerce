@@ -36,7 +36,6 @@ public class BuyGoodsRtn {
 				Goods good = new Goods();
 				if(Integer.parseInt(tempBuyMap.get(key))!=0){
 					good.setGoodsID(key);
-					good.getGoodsName();
 					good.setGoodsQuantity(Integer.parseInt(tempBuyMap.get(key)));
 					Goods.add(good);
 				}
@@ -46,14 +45,18 @@ public class BuyGoodsRtn {
 		//顯示購買清單
 		public static String showBuyGoods(List<Goods> buyGoodsList) {
 			String message = "";
-			message += "======================</br>";
-			message += "您購買的商品如下</br>";
+//			message += "======================</br>";
+//			message += "您購買的商品如下</br>";
+			
 			for(Goods good : buyGoodsList){
-				message += "商品名稱:" + good.getGoodsName() + ",";
-				message += "購買數量:" + good.getGoodsQuantity() + "</br>";
+				message += "<br/>" + good.getGoodsName();
+				message += "  價格:" + good.getGoodsPrice();
+				message += " * 數量:" + good.getGoodsQuantity();
 			}
 			return message;
 		}
+		
+		//分頁處理
 		public static int pageService(String pageString, String hiddenpage) { //注意static
 			
 			int page=1;

@@ -54,17 +54,27 @@ public class FrontendAction extends DispatchAction {
 		List<Goods> totalCost = frontEndService.buySumTotalCost(buyGoodsList);
 		
 		String message = "";
+		
 		if(inputMoney >= frontEndService.customerBuy(totalCost)){
 			//查庫存數量
 			List<Goods> buyGoods = frontEndService.buyTotalCost(buyGoodsList);//查詢問題沒有goods name
 			int costMoney = frontEndService.customerBuy(buyGoods);
-			session.setAttribute("buyMoney", (inputMoney-costMoney));
-			message += "購買完成</br>";
+			
+			
+			session.setAttribute("giveChange", (inputMoney-costMoney));
+			
+			message += "<br/>~~~~~消費明細~~~~~<br/>";
+			message += "<br/>投入金額:";
+			message += inputMoney;
+			message += "<br/>購買金額:";
+			message += costMoney;
+			message += "<br/>找零金額:";
+			message += (inputMoney-costMoney);
 			message += BuyGoodsRtn.showBuyGoods(buyGoodsList);
 			
 			//更新資料庫
 			boolean updateGoodsDB = frontEndService.batchUpdateGoodsQuantity(buyGoodsList);
-			message += updateGoodsDB ? "庫存更新成功</br>" : "庫存更新失敗</br>";
+			message += updateGoodsDB ? "<br/><br/>庫存更新成功<br/>" : "<br/><br/>庫存更新失敗<br/>";
 			
 			//新增訂單
 			Account account = (Account)session.getAttribute("account");
@@ -75,8 +85,17 @@ public class FrontendAction extends DispatchAction {
 			session.removeAttribute("tempBuyMap");
 			session.removeAttribute("countPage");
 		}else{
+			List<Goods> buyGoods = frontEndService.buyTotalCost(buyGoodsList);//查詢問題沒有goods name
+			int costMoney = frontEndService.customerBuy(buyGoods);
+			
 			message = "投入金額不足！";
 			session.setAttribute("giveChange", inputMoney);
+			message += "<br/>投入金額:";
+			message += inputMoney;
+			message += "<br/>購買金額:";
+			message += costMoney;
+			message += "<br/>找零金額:";
+			message += inputMoney;
 			tempBuyMap = new HashMap<Integer,String>();
 			session.setAttribute("tempBuyMap", tempBuyMap);
 		}
@@ -94,7 +113,7 @@ public class FrontendAction extends DispatchAction {
 		//分頁數值,解決js產生的問題
 		String pageString = request.getParameter("page");
 		String hiddenpage = request.getParameter("hiddenpage");
-		String searchKeyword = request.getParameter("searchKeyword");
+		String searchKeyword = request.getParameter("searchKeyword"); //查詢關鍵字
 		searchKeyword = searchKeyword == null?"":searchKeyword;
 		
 		int page = BuyGoodsRtn.pageService(pageString,hiddenpage);

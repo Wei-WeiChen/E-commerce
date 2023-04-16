@@ -49,20 +49,24 @@
 						<a href="BackendAction.do?action=queryGoods" align="left" >後臺頁面</a>&nbsp; &nbsp;
 						<a href="LoginAction.do?action=logout" align="left">登出</a>
 						<br/>
-						<p style="color:blue;">${sessionScope.deleteMsg}</p>
-						<% session.removeAttribute("deleteMsg"); %>	
-						<br/>
-						
+						<br/>	
 						<font face="微軟正黑體" size="4" >
 							<b>投入:</b>
 							<input type="number" name="inputMoney" max="100000" min="0"  size="5" value="0">
 							<b>元</b>		
 							<b><input type="submit" value="送出">					
 							<br/><br/>
-							&nbsp;&nbsp;&nbsp;
-							找零金額：${sessionScope.giveChange}</b>
-							<%session.removeAttribute("giveChange"); %>
+<!-- 							&nbsp;&nbsp;&nbsp; -->
+<%-- 							找零金額：${sessionScope.giveChange}</b> --%>
+<%-- 							<%session.removeAttribute("giveChange"); %> --%>
 						</font>
+						
+						<font style="color:blue;">
+							${sessionScope.message}
+						</font>						
+						<% session.removeAttribute("message"); %>	
+						<br/>
+						
 					</td>
 					
 					<td width="600" height="400">
