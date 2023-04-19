@@ -148,9 +148,11 @@ public class FrontEndService {
 	}
 	
 	//回傳前端顯示的資料
-	public List<Goods> showGoodsService(int page) {
-		
-		return frontEndDao.returnPage(page);
+	public List<Goods> showGoodsService(int page ,String searchKeyword) {
+		if(searchKeyword==null){
+			searchKeyword="";
+		}
+		return frontEndDao.returnPage(page ,searchKeyword);
 	}
 	
 	

@@ -17,7 +17,7 @@
 	<script type="text/javascript">
 		function buyQuantityfun(){
 			document.FrontendForm.action.value = "buyGoodsView";
-			document.FrontendFrom.submit()
+			document.FrontendFrom.submit();
 		}
 	</script>
 </head>
@@ -36,11 +36,12 @@
 			</form>
 		</td>
 	</tr>
-	<tr>
-	
-	<form name="FrontendForm" action="FrontendAction.do" method="post">
+	<form name="FrontendForm" id="FrontendForm" action="FrontendAction.do" method="post">
 			<input type="hidden" name="action" value="buyGoods"/>
 			<input type="hidden" name="hiddenpage" value="${requestScope.page}"/>
+	<tr>
+	
+			
 <!-- 			<table width="1000" height="400" align="center"> -->
 				<tr>
 					<td width="400" height="200">
@@ -54,7 +55,7 @@
 							<b>投入:</b>
 							<input type="number" name="inputMoney" max="100000" min="0"  size="5" value="0">
 							<b>元</b>		
-							<b><input type="submit" value="送出">					
+							<b><input type="submit" value="送出" >					
 							<br/><br/>
 <!-- 							&nbsp;&nbsp;&nbsp; -->
 <%-- 							找零金額：${sessionScope.giveChange}</b> --%>

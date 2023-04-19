@@ -263,17 +263,18 @@ public class FrontEndDao {
 		
 	}
 
-	public List<Goods> returnPage(int page) {
+	public List<Goods> returnPage(int page ,String searchKeyword) {
 		List<Goods> Goods = new ArrayList<Goods>();
 		String returnSQL = "SELECT * FROM" 
 						+" (SELECT ROWNUM ROW_NUM,GOODS_ID,GOODS_NAME,PRICE,QUANTITY,IMAGE_NAME,STATUS"
 						+" FROM BEVERAGE_GOODS"
-						+" WHERE STATUS = 1 AND QUANTITY >0)"
+						+" WHERE UPPER (GOODS_NAME) LIKE ? AND STATUS = 1 AND QUANTITY >0)"
 						+" WHERE ROW_NUM BETWEEN ? AND ?";
 		try(Connection conn=DBConnectionFactory.getOracleDBConnection();
 				PreparedStatement stmt=conn.prepareStatement(returnSQL)	){
-				stmt.setInt(1, (page-1)*6+1);
-				stmt.setInt(2, page*6);
+				stmt.setString(1, "%"+searchKeyword.toUpperCase()+"%");
+				stmt.setInt(2, (page-1)*6+1);
+				stmt.setInt(3, page*6);
 				try(ResultSet rs=stmt.executeQuery()){
 					while(rs.next()){
 						Goods good =new Goods();

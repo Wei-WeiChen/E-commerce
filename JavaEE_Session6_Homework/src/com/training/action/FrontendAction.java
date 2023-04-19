@@ -44,6 +44,7 @@ public class FrontendAction extends DispatchAction {
 		int inputMoney = formData.getInputMoney();
 		//取session並新增值
 		HttpSession session = request.getSession();
+		
 		Map<Integer, String> tempBuyMap = (Map<Integer,String>)session.getAttribute("tempBuyMap");
 		for(int i =0;i<formData.getGoodsID().length;i++){
 			tempBuyMap.put(Integer.parseInt(formData.getGoodsID()[i]), formData.getBuyQuantity()[i]);
@@ -139,12 +140,13 @@ public class FrontendAction extends DispatchAction {
 		
 		//與資料庫連線，找出商品項目，補滿六項
 		
-		List<Goods> showGoods = frontEndService.showGoodsService(page);	
+		List<Goods> showGoods = frontEndService.showGoodsService(page,searchKeyword);	
 		//避免JSTL顯示產生IndexOutOfBoundsException
 		while (showGoods.size()!=6){
 			showGoods.add(null);
 		}
 		request.setAttribute("showGoods", showGoods);
+		request.setAttribute("searchKeyword",searchKeyword);
 		
 		//擷取暫時購買清單(session)
 		FrontendformData formData = (FrontendformData)form;
@@ -163,8 +165,7 @@ public class FrontendAction extends DispatchAction {
 			session.setAttribute("tempBuyMap:",tempBuyMap);
 		}
 		session.removeAttribute("goods");
-//		Set<Goods> goods = FrontEndService.searchGoods(request.getParameter("searchKeyword"), Integer.parseInt(request.getParameter("pageNo")));
-//		goods.stream().forEach(g -> System.out.println(g));				
+			
 		return mapping.findForward("buyGoodsView");
 	}
 	
