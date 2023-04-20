@@ -14,12 +14,7 @@
 		}
 	</style>
 	
-	<script type="text/javascript">
-		function buyQuantityfun(){
-			document.FrontendForm.action.value = "buyGoodsView";
-			document.FrontendFrom.submit();
-		}
-	</script>
+
 </head>
 
 <body align="center">
@@ -57,17 +52,16 @@
 							<b>元</b>		
 							<b><input type="submit" value="送出" >					
 							<br/><br/>
-<!-- 							&nbsp;&nbsp;&nbsp; -->
-<%-- 							找零金額：${sessionScope.giveChange}</b> --%>
-<%-- 							<%session.removeAttribute("giveChange"); %> --%>
 						</font>
-						
-						<font style="color:blue;">
+				<!--訊息框 -->
+				<div style="border-width:3px;border-style:dashed;border-color:#FFAC55;
+						padding:5px;width:300px;">
+						<font>
 							${sessionScope.message}
 						</font>						
 						<% session.removeAttribute("message"); %>	
 						<br/>
-						
+					</div>	
 					</td>
 					
 					<td width="600" height="400">
@@ -94,16 +88,17 @@
 										
 										<!-- 設定最多不能買大於庫存數量 -->
 										<c:choose>
-											<c:when test="${sessionScope.tempBuyMap.containsKey(requestScope.showGoods.get(item).goodsID) eq true}">
+											<c:when test="${sessionScope.carGoods.containsKey(requestScope.showGoods.get(item).goodsID) eq true}">
 												購買<input type="number" name="buyQuantity" min="0" 
 												max="${requestScope.showGoods.get(item).goodsQuantity}" size="5" 
-												value="${sessionScope.tempBuyMap.get(requestScope.showGoods.get(item).goodsID)}"
-												onchange="buyQuantityfun();">罐
+												value="${sessionScope.carGoods.get(requestScope.showGoods.get(item).goodsID)}">罐
+<!-- 												onchange="buyQuantityfun();" -->
 											</c:when>
 											<c:otherwise>
 												購買<input type="number" name="buyQuantity" min="0" 
 												max="${requestScope.showGoods.get(item).goodsQuantity}" size="5" 
-												value="0" onchange="buyQuantityfun();">罐
+												value="0" >罐
+<!-- 												onchange="buyQuantityfun();" -->
 											</c:otherwise>
 										</c:choose>
 										
@@ -127,7 +122,7 @@
 				上一頁
 			</c:when>
 			<c:otherwise>
-				<a href="${link}" style="text-decoration:none">"上一頁"</a>
+				<a href="${link}&searchKeyword=${searchKeyword}" style="text-decoration:none">"上一頁"</a>
 			</c:otherwise>
 		</c:choose>			
 		
@@ -137,10 +132,10 @@
 			</c:url>
 			<c:choose>
 			<c:when test="${requestScope.page eq row}">
-				<a href="${link}"><b>${row}</b></a>
+				<a href="${link}&searchKeyword=${searchKeyword}"><b>${row}</b></a>
 			</c:when>
 				<c:otherwise>
-					<a href="${link}" style="text-decoration:none">${row}</a>
+					<a href="${link}&searchKeyword=${searchKeyword}" style="text-decoration:none">${row}</a>
 				</c:otherwise>
 			</c:choose>	
 		</c:forEach>
@@ -150,7 +145,7 @@
 		</c:url>		
 		<c:choose>
 			<c:when test="${requestScope.next eq 1}">
-				<a href="${link}" style="text-decoration:none">"下一頁"</a>
+				<a href="${link}&searchKeyword=${searchKeyword}" style="text-decoration:none">"下一頁"</a>
 			</c:when>
 			<c:otherwise>
 				下一頁

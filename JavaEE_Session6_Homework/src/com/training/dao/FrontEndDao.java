@@ -242,11 +242,12 @@ public class FrontEndDao {
 	}
 	//回傳頁面商品選單
 	
-	public int goodsIcon(){
-		String countSQL = "SELECT COUNT(*)COUNT FROM BEVERAGE_GOODS G WHERE STATUS = 1 AND QUANTITY > 0";
+	public int goodsIcon(String searchKeyword){
+		String countSQL = "SELECT COUNT(*)COUNT FROM BEVERAGE_GOODS G WHERE UPPER(G.GOODS_NAME) LIKE ? AND STATUS = 1 AND QUANTITY > 0";
 		int count = 0;
 		try(Connection conn=DBConnectionFactory.getOracleDBConnection();
 				PreparedStatement stmt=conn.prepareStatement(countSQL)	){
+				stmt.setString(1, "%"+searchKeyword.toUpperCase()+"%");
 				
 				try(ResultSet rs=stmt.executeQuery()){
 					while(rs.next()){

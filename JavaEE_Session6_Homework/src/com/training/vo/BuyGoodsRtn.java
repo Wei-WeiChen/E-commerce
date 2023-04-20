@@ -77,10 +77,10 @@ public class BuyGoodsRtn {
 			}
 			return rowList;
 		}
-		//每頁數量6筆
 		
-		public static int countPageService(FrontEndService frontEndService) {
-			int count = frontEndService.goodsIcon();
+		//每頁數量6筆
+		public static int countPageService(FrontEndService frontEndService, String searchKeyword) {
+			int count = frontEndService.goodsIcon(searchKeyword);
 			int countPage = (count%6 == 0)?count/6:(count/6)+1;
 			
 			return countPage;

@@ -45,17 +45,17 @@ public class FrontendAction extends DispatchAction {
 		//取session並新增值
 		HttpSession session = request.getSession();
 		
-		Map<Integer, String> tempBuyMap = (Map<Integer,String>)session.getAttribute("tempBuyMap");
+		Map<Integer, String> carGoods = (Map<Integer,String>)session.getAttribute("carGoods");
 		for(int i =0;i<formData.getGoodsID().length;i++){
-			tempBuyMap.put(Integer.parseInt(formData.getGoodsID()[i]), formData.getBuyQuantity()[i]);
+			carGoods.put(Integer.parseInt(formData.getGoodsID()[i]), formData.getBuyQuantity()[i]);
 		}
 		//ID數量組合並移除0的項目
-		List<Goods> buyGoodsList = BuyGoodsRtn.buyGoodsList(tempBuyMap);//處理用MAP看看
+		List<Goods> buyGoodsList = BuyGoodsRtn.buyGoodsList(carGoods);//處理用MAP看看
 		//計算總共花費
 		List<Goods> totalCost = frontEndService.buySumTotalCost(buyGoodsList);
 		
-		String message = "";
-		
+		//購買訊息(黃色框框)
+		String message = "";		
 		if(inputMoney >= frontEndService.customerBuy(totalCost)){
 			//查庫存數量
 			List<Goods> buyGoods = frontEndService.buyTotalCost(buyGoodsList);//查詢問題沒有goods name
@@ -83,8 +83,12 @@ public class FrontendAction extends DispatchAction {
 			
 			boolean createGoodsOrder = frontEndService.batchCreateGoodsOrder(frontEndService.listToOrder(buyGoodsList,customerID));
 			message += createGoodsOrder ? "訂單新增成功<br/>" : "訂單新增失敗<br/>";
-			session.removeAttribute("tempBuyMap");
-			session.removeAttribute("countPage");
+
+			//清空資料
+			carGoods = new HashMap<Integer,String>();
+			session.setAttribute("carGoods", carGoods);
+
+			
 		}else{
 			List<Goods> buyGoods = frontEndService.buyTotalCost(buyGoodsList);//查詢問題沒有goods name
 			int costMoney = frontEndService.customerBuy(buyGoods);
@@ -97,10 +101,15 @@ public class FrontendAction extends DispatchAction {
 			message += costMoney;
 			message += "<br/>找零金額:";
 			message += inputMoney;
-			tempBuyMap = new HashMap<Integer,String>();
-			session.setAttribute("tempBuyMap", tempBuyMap);
+			
+			//清空資料
+			carGoods = new HashMap<Integer,String>();
+			session.setAttribute("carGoods", carGoods);
 		}
-		session.setAttribute("message", message);//清空資料
+		session.setAttribute("message", message);	
+		
+		
+
 		
 		//回到購物頁面
 		return mapping.findForward("VendingMachine");		
@@ -124,9 +133,7 @@ public class FrontendAction extends DispatchAction {
 		HttpSession session = request.getSession();
 		int countPage = 0;
 		if(session.getAttribute("countPage")!=null){
-			countPage = (int)session.getAttribute("countPage");
-		}else{
-			int count = frontEndService.goodsIcon();
+			int count = frontEndService.goodsIcon(searchKeyword);
 			countPage = (count%6 == 0)? count/6:(count/6)+1;
 			session.setAttribute("countPage", countPage);
 		}
@@ -147,41 +154,23 @@ public class FrontendAction extends DispatchAction {
 		}
 		request.setAttribute("showGoods", showGoods);
 		request.setAttribute("searchKeyword",searchKeyword);
-		
-		//擷取暫時購買清單(session)
-		FrontendformData formData = (FrontendformData)form;
-		Map<Integer,String>tempBuyMap;
-		if(formData.getGoodsID()!=null){
-			if(session.getAttribute("tempBuyMap")!=null){
-				tempBuyMap = (Map<Integer,String>)session.getAttribute("tempBuyMap");
-				for(int i = 0;i<formData.getGoodsID().length;i++){
-					tempBuyMap.put(Integer.parseInt(formData.getGoodsID()[i]), formData.getBuyQuantity()[i]);
-				}
-			}else{
-				tempBuyMap = new HashMap<Integer,String>();
-				System.out.println("建立暫時購物清單");
-			}
-			System.out.println("tempBuyMap:"+tempBuyMap);
-			session.setAttribute("tempBuyMap:",tempBuyMap);
-		}
-		session.removeAttribute("goods");
-			
+				
 		return mapping.findForward("buyGoodsView");
 	}
 	
-
 	
 	//暫時購物清單
 	public ActionForward initial (ActionMapping mapping, ActionForm form, 
             HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		HttpSession session = request.getSession();
-		Map<Integer,String>tempBuyMap = new HashMap<>();
+		Map<Integer,String>carGoods = new HashMap<>();
 		System.out.println("暫時購物清單");
-		session.setAttribute("tempBuyMap", tempBuyMap);
 		
-		int countPage = BuyGoodsRtn.countPageService(frontEndService);
+		
+		int countPage = BuyGoodsRtn.countPageService(frontEndService,"");
 		session.setAttribute("countPage", countPage);
+		session.setAttribute("carGoods", carGoods);
 		
 		return mapping.findForward("initial");
 	}
@@ -268,5 +257,7 @@ public class FrontendAction extends DispatchAction {
 ////System.out.println("購買總金額:"+buySum);		
 //		
 //
-
 // Redirect to view
+
+//jsp
+//

@@ -142,9 +142,9 @@ public class FrontEndService {
 	}
 	
 	//回傳頁面商品選項
-	public int goodsIcon() {
+	public int goodsIcon(String searchKeyword) {
 	
-		return frontEndDao.goodsIcon();
+		return frontEndDao.goodsIcon(searchKeyword);
 	}
 	
 	//回傳前端顯示的資料
