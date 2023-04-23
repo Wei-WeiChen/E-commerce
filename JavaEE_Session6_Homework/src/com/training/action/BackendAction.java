@@ -111,9 +111,7 @@ public class BackendAction extends DispatchAction {
 		BackendformData formData = (BackendformData) form;		
 		Goods goods = new Goods();
 		BeanUtils.copyProperties(goods, formData);
-				
-		
-		
+					
 		//圖片上傳
 		boolean updateImg = false;
 		FormFile imgFile = (FormFile)PropertyUtils.getSimpleProperty(form, "goodsImage");
@@ -135,40 +133,11 @@ public class BackendAction extends DispatchAction {
 			}
 		}
 		goods.setGoodsImageName(imgFile.getFileName());
-		boolean createResult = backEndService.createGoods(goods);
-		String message = (createResult && updateImg) ?"新增一項商品" : "商品新增失敗";
+		int createGood = backEndService.createGoods(goods);
 		
-//		boolean updateImg = false;
-//		FormFile imgFile = (FormFile)PropertyUtils.getSimpleProperty(form, "goodsImage"); 
-//        FileOutputStream fileOutput = new FileOutputStream("/home/VendingMachine/DrinksImage/" + imgFile.getFileName()); 
-//        fileOutput.write(imgFile.getFileData()); 
-//        fileOutput.flush();
-//        updateImg=true;
-//        fileOutput.close(); 
-//        imgFile.destroy() ;  // destroy temperaty file
-//        
-//        String message = (createResult && updateImg) ?"新增一項商品" : "商品新增失敗";
-        
-
-
-		//NIO
-//		boolean updateImg = false;
-//		BackendformData backForm = (BackendformData) form;
-//		FormFile imgFile = backForm.getGoodsImage();
-//		String goodsImgPath = servlet.getInitParameter("GoodsImgPath");
-//		String serverGoodsImgPath = servlet.getServletContext().getRealPath(goodsImgPath);
-//		String fileName = imgFile.getFileName();
-//		
-//		Part filePart = request.getPart("goodsImage");		
-//
-//	    String serverImgPath = imgFile.getFileName();
-//	    System.out.println(serverImgPath);
-//	    
-//	    try (InputStream fileContent = imgFile.getInputStream();){
-//	    	Files.copy(fileContent, serverImgPath, StandardCopyOption.REPLACE_EXISTING);
-//	    }  
-//	    String message = (createResult && updateImg) ?"新增一項商品" : "商品新增失敗";
-		
+		String message = (createGood!=0 && updateImg) ?"新增一項商品": "商品新增失敗";
+			message += "<br/>商品ID:"+createGood+"<br/>商品名稱:"+goods.getGoodsName();
+				
 		HttpSession session = request.getSession();
 		session.setAttribute("message", message);
 		session.removeAttribute("goods");
@@ -216,3 +185,39 @@ public class BackendAction extends DispatchAction {
 	
 
 }
+
+
+
+
+
+
+//boolean updateImg = false;
+//FormFile imgFile = (FormFile)PropertyUtils.getSimpleProperty(form, "goodsImage"); 
+//FileOutputStream fileOutput = new FileOutputStream("/home/VendingMachine/DrinksImage/" + imgFile.getFileName()); 
+//fileOutput.write(imgFile.getFileData()); 
+//fileOutput.flush();
+//updateImg=true;
+//fileOutput.close(); 
+//imgFile.destroy() ;  // destroy temperaty file
+//
+//String message = (createResult && updateImg) ?"新增一項商品" : "商品新增失敗";
+
+
+
+//NIO
+//boolean updateImg = false;
+//BackendformData backForm = (BackendformData) form;
+//FormFile imgFile = backForm.getGoodsImage();
+//String goodsImgPath = servlet.getInitParameter("GoodsImgPath");
+//String serverGoodsImgPath = servlet.getServletContext().getRealPath(goodsImgPath);
+//String fileName = imgFile.getFileName();
+//
+//Part filePart = request.getPart("goodsImage");		
+//
+//String serverImgPath = imgFile.getFileName();
+//System.out.println(serverImgPath);
+//
+//try (InputStream fileContent = imgFile.getInputStream();){
+//	Files.copy(fileContent, serverImgPath, StandardCopyOption.REPLACE_EXISTING);
+//}  
+//String message = (createResult && updateImg) ?"新增一項商品" : "商品新增失敗";

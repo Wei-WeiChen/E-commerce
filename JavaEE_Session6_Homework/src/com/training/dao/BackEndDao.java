@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
@@ -88,34 +89,36 @@ public class BackEndDao {
 	 * @param goods
 	 * @return int(商品編號)
 	 */
-	public boolean createGoods(Goods goods){
-		boolean createSuccess = false;
-		try(Connection conn = DBConnectionFactory.getOracleDBConnection()){
-			conn.setAutoCommit(false);
-			String insertSQL="INSERT INTO BEVERAGE_GOODS (GOODS_ID,GOODS_NAME,PRICE,QUANTITY,IMAGE_NAME,STATUS) VALUES (BEVERAGE_GOODS_SEQ.NEXTVAL,?,?,?,?,?)";
+	public int createGoods(Goods goods){
+		int goodsID = 0;
+		String insert_stmt = "INSERT INTO BEVERAGE_GOODS "
+				+ "(GOODS_ID,GOODS_NAME,PRICE,QUANTITY,IMAGE_NAME,STATUS) "
+				+ "VALUES (BEVERAGE_GOODS_seq.NEXTVAL, ?, ?, ?, ?, ?)";
+		String cols[] = { "GOODS_ID" };
+		
+		try (Connection con = DBConnectionFactory.getOracleDBConnection();
+				PreparedStatement pstmt = con.prepareStatement(insert_stmt, cols)) {
+			pstmt.setString(1, goods.getGoodsName());
+			pstmt.setInt(2, goods.getGoodsPrice());
+			pstmt.setInt(3, goods.getGoodsQuantity());
+			pstmt.setString(4, goods.getGoodsImageName());
+			pstmt.setString(5, goods.getStatus());
+			pstmt.executeUpdate();
 			
-			try(PreparedStatement pstmt = conn.prepareStatement(insertSQL)){
-				
-				pstmt.setString(1, goods.getGoodsName());
-				pstmt.setInt(2, goods.getGoodsPrice());
-				pstmt.setInt(3, goods.getGoodsQuantity());
-				pstmt.setString(4, goods.getGoodsImageName());
-				pstmt.setString(5, goods.getStatus());			
-				int count=pstmt.executeUpdate();
-				
-				createSuccess = (count>0) ? true : false;
-				conn.commit();
-								
-			}catch(SQLException e){
-				conn.rollback();
-				throw e;
+			ResultSet rsKeys = pstmt.getGeneratedKeys();
+			ResultSetMetaData rsmd = rsKeys.getMetaData();
+			int columnCount = rsmd.getColumnCount();
+			while (rsKeys.next()) {
+				for (int i = 1; i <= columnCount; i++) {
+					rsKeys.getString(i);					
+					goodsID=rsKeys.getInt(i);
+				}
 			}
-			conn.commit();
+
 		} catch (SQLException e) {
-			createSuccess = false;
 			e.printStackTrace();
 		}
-		return createSuccess ;
+		return goodsID;
 	}
 	
 	/**
@@ -136,20 +139,17 @@ public class BackEndDao {
 //				stmt.setString(4, goods.getGoodsImageName());
 				stmt.setString(3, goods.getStatus());
 				stmt.setInt(4, goods.getGoodsID());				
-				int count=stmt.executeUpdate();
 				
-				if(count==0){
-					updateSuccess=false;
-				}else{
-					updateSuccess=true;
-				}
+				int count=stmt.executeUpdate();
+				updateSuccess = (count>0) ? true : false;
 									
 			}catch(SQLException e){
 				conn.rollback();
 				throw e;				
 			}
 			conn.commit();
-		} catch (SQLException e) {		
+		} catch (SQLException e) {
+			updateSuccess=false;
 			e.printStackTrace();
 		}
 		
@@ -170,13 +170,9 @@ public class BackEndDao {
 			
 			try(PreparedStatement stmt=conn.prepareStatement(deleteSql)){
 				stmt.setBigDecimal(1, goodsID);
-				int count=stmt.executeUpdate();
 				
-				if(count==0){
-					deleteSuccess=false;
-				}else{
-					deleteSuccess=true;
-				}
+				int count=stmt.executeUpdate();
+				deleteSuccess = (count > 0) ? true : false;
 								
 			}catch(SQLException e){
 				conn.rollback();
@@ -184,6 +180,7 @@ public class BackEndDao {
 			}
 			conn.commit();
 		}catch(SQLException e){
+			deleteSuccess=false;
 			e.printStackTrace();
 		}
 		return deleteSuccess;

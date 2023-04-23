@@ -44,6 +44,10 @@
 			<input type="number" name="goodsPrice" size="5" value="${updateGoods.goodsPrice}" min="0" max="1000">
 		</p>
 		<p>
+			庫存數量：
+			<fmt:formatNumber value="${updateGoods.goodsQuantity}" type="number" />
+		</p>
+		<p>
 			補貨數量：
 			<input type="number" name="goodsQuantity" size="5" value="0" min="0" max="1000">
 		</p>

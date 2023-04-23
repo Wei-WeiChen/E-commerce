@@ -59,35 +59,48 @@ public class FrontendAction extends DispatchAction {
 		if(inputMoney >= frontEndService.customerBuy(totalCost)){
 			//查庫存數量
 			List<Goods> buyGoods = frontEndService.buyTotalCost(buyGoodsList);//查詢問題沒有goods name
-			int costMoney = frontEndService.customerBuy(buyGoods);
+			int costMoney = frontEndService.customerBuy(buyGoods);//檢查有沒有買到東西
 			
-			
-			session.setAttribute("giveChange", (inputMoney-costMoney));
-			
-			message += "<br/>~~~~~消費明細~~~~~<br/>";
-			message += "<br/>投入金額:";
-			message += inputMoney;
-			message += "<br/>購買金額:";
-			message += costMoney;
-			message += "<br/>找零金額:";
-			message += (inputMoney-costMoney);
-			message += BuyGoodsRtn.showBuyGoods(buyGoodsList);
-			
-			//更新資料庫
-			boolean updateGoodsDB = frontEndService.batchUpdateGoodsQuantity(buyGoodsList);
-			message += updateGoodsDB ? "<br/><br/>庫存更新成功<br/>" : "<br/><br/>庫存更新失敗<br/>";
-			
-			//新增訂單
-			Account account = (Account)session.getAttribute("account");
-			String customerID = account.getId();
-			
-			boolean createGoodsOrder = frontEndService.batchCreateGoodsOrder(frontEndService.listToOrder(buyGoodsList,customerID));
-			message += createGoodsOrder ? "訂單新增成功<br/>" : "訂單新增失敗<br/>";
+			if(costMoney > 0){
+				session.setAttribute("giveChange", (inputMoney-costMoney));
+				
+				message += "<br/>~~~~~消費明細~~~~~<br/>";
+				message += "<br/>投入金額:";
+				message += inputMoney;
+				message += "<br/>購買金額:";
+				message += costMoney;
+				message += "<br/>找零金額:";
+				message += (inputMoney-costMoney);
+				message += BuyGoodsRtn.showBuyGoods(buyGoodsList);
+				
+				//更新資料庫
+				boolean updateGoodsDB = frontEndService.batchUpdateGoodsQuantity(buyGoodsList);
+				message += updateGoodsDB ? "<br/><br/>庫存更新成功<br/>" : "<br/><br/>庫存更新失敗<br/>";
+				
+				//新增訂單
+				Account account = (Account)session.getAttribute("account");
+				String customerID = account.getId();
+				
+				boolean createGoodsOrder = frontEndService.batchCreateGoodsOrder(frontEndService.listToOrder(buyGoodsList,customerID));
+				message += createGoodsOrder ? "訂單新增成功<br/>" : "訂單新增失敗<br/>";
 
-			//清空資料
-			carGoods = new HashMap<Integer,String>();
-			session.setAttribute("carGoods", carGoods);
-
+				//清空資料
+				carGoods = new HashMap<Integer,String>();
+				session.setAttribute("carGoods", carGoods);
+			}else{
+				session.setAttribute("giveChange", inputMoney);
+				
+				message = "抱歉庫存不足！";
+				message += "<br/>投入金額:";
+				message += inputMoney;
+				message += "<br/>購買金額:";
+				message += costMoney;
+				message += "<br/>找零金額:";
+				message += inputMoney;				
+				//清空資料
+				carGoods = new HashMap<Integer,String>();
+				session.setAttribute("carGoods", carGoods);	
+			}
 			
 		}else{
 			List<Goods> buyGoods = frontEndService.buyTotalCost(buyGoodsList);//查詢問題沒有goods name

@@ -187,13 +187,14 @@ public class FrontEndDao {
 					}else{
 						updateSuccess=false;
 					}
+					conn.commit();
 				}				
 			}catch(SQLException e){
 				conn.rollback();
 				throw e;
 			}
-			conn.commit();
 		} catch (SQLException e) {		
+			updateSuccess=false;
 			e.printStackTrace();
 		}		
 		return updateSuccess;
@@ -227,15 +228,15 @@ public class FrontEndDao {
 				for(int count : counts){
 					if(count==-2){
 						insertSuccess = true;
-					}	
+					}
+					conn.commit();
 				}								
 			}catch(SQLException e){
 				conn.rollback();
 				throw e;
-			}
-			conn.commit();
-			
+			}		
 		} catch (SQLException e) {			
+			insertSuccess = false;
 			e.printStackTrace();
 		}		
 		return insertSuccess;

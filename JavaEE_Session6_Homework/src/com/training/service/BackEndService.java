@@ -33,7 +33,7 @@ public class BackEndService {
 		return backendDao.updateGoods(goods);
 	}
 	
-	public boolean createGoods(Goods goods) {
+	public int createGoods(Goods goods) {
 		
 		
 		

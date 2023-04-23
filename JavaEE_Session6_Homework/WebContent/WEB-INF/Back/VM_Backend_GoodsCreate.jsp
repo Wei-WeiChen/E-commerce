@@ -16,10 +16,11 @@
 		
 	<h2>商品新增上架</h2><br/>
 	<div style="margin-left:25px;">
-	<p style="color:blue;">${sessionScope.deleteMsg}</p>
-	<% session.removeAttribute("deleteMsg"); %>	
+	<p style="color:blue;">${sessionScope.message}</p>
+	<% session.removeAttribute("message"); %>	
 	
 	<form action="BackendAction.do?action=createGoods" enctype="multipart/form-data" method="post">
+		
 		<p>
 			飲料名稱：
 			<input type="text" name="goodsName" size="10"/>

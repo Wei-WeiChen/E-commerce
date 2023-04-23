@@ -117,7 +117,10 @@ public class FrontEndService {
 		boolean result = false;
 		for(int i= 0;i < buyGoods.size();i++){
 			buyGoods.get(i).setGoodsQuantity(buyGoods.get(i).getGoodsQuantity() - buyGoodsList.get(i).getGoodsQuantity());
-			result = frontEndDao.batchUpdateGoodsQuantity(buyGoods);
+			if(buyGoods.get(i).getGoodsQuantity()<=0){
+				result = false;
+			}
+			result = frontEndDao.batchUpdateGoodsQuantity(buyGoods);//Quantity負數
 		}
 		
 		return result;
