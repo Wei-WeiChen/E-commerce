@@ -24,7 +24,6 @@
 	<table border="1" style="border-collapse:collapse;margin-left:25px;">
 		<tr>
 			<td width="200" height="50" align="center">
-<!-- 				<a href="VM_Backend_GoodsList.html">商品列表</a> -->
 				<a href="BackendAction.do?action=queryGoods">商品列表</a>
 			</td>
 			<td width="200" height="50" align="center">

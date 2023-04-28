@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.training.model.Goods;
+import com.training.service.FrontEndService;
 import com.training.vo.SalesReport;
 import com.training.dao.DBConnectionFactory;
 
@@ -31,6 +32,7 @@ public class BackEndDao {
 	 * 後臺管理商品列表
 	 * @return Set(Goods)
 	 */
+	
 	public Set<Goods> queryGoods() {
 		Set<Goods> goods = new LinkedHashSet<>(); 
 		String querySQL = "SELECT * FROM BEVERAGE_GOODS";
@@ -51,8 +53,6 @@ public class BackEndDao {
 			e.printStackTrace();
 		}		
 		return goods;
-		
-		
 	}
 	
 	public List<Goods> queryGoodById(String TotalID){
@@ -233,6 +233,81 @@ public class BackEndDao {
 			e.printStackTrace();
 		}		
 		return reports;
-	}	
+	}
+
+	public Set<Goods> queryAllGoods() {
+		Set<Goods> goods = new LinkedHashSet<>(); 
+		String querySQL = "SELECT * FROM BEVERAGE_GOODS";
+		try(Connection conn=DBConnectionFactory.getOracleDBConnection();
+			Statement stmt=conn.createStatement();
+			ResultSet rs=stmt.executeQuery(querySQL)){
+				while(rs.next()){
+					Goods good= new Goods();
+					good.setGoodsID(rs.getInt("GOODS_ID"));
+					good.setGoodsName(rs.getString("GOODS_NAME"));
+					good.setGoodsPrice(rs.getInt("PRICE"));
+					good.setGoodsQuantity(rs.getInt("QUANTITY"));
+					good.setGoodsImageName(rs.getString("IMAGE_NAME"));
+					good.setStatus(rs.getString("STATUS"));
+					goods.add(good);					
+				}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}		
+		return goods;
+	}
+
+	public List<Goods> returnPage(int page) {
+		List<Goods> Goods = new ArrayList<Goods>();
+		String returnSQL = "SELECT * FROM" 
+						+" (SELECT ROWNUM ROW_NUM,GOODS_ID,GOODS_NAME,PRICE,QUANTITY,IMAGE_NAME,STATUS"
+						+" FROM BEVERAGE_GOODS"
+						+" WHERE GOODS_ID IS NOT NULL)"
+						+" WHERE ROW_NUM BETWEEN ? AND ?";
+		try(Connection conn=DBConnectionFactory.getOracleDBConnection();
+				PreparedStatement stmt=conn.prepareStatement(returnSQL)	){
+				stmt.setInt(1, (page-1)*10+1);
+				stmt.setInt(2, page*10);
+				try(ResultSet rs=stmt.executeQuery()){
+					while(rs.next()){
+						Goods good =new Goods();
+						good.setGoodsID(rs.getInt("GOODS_ID"));
+						good.setGoodsName(rs.getString("GOODS_NAME"));
+						good.setGoodsPrice(rs.getInt("PRICE"));
+						good.setGoodsQuantity(rs.getInt("QUANTITY"));
+						good.setGoodsImage("DrinksImage/"+rs.getString("IMAGE_NAME"));
+						good.setStatus(rs.getString("STATUS"));
+						Goods.add(good);
+					}
+				}catch(SQLException e){
+					throw e;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		
+		return Goods;
+	}
+
+	public int goodsIcon() {
+		String countSQL = "SELECT COUNT(*)COUNT FROM BEVERAGE_GOODS G WHERE G.GOODS_ID IS NOT NULL";
+		int count = 0;
+		try(Connection conn=DBConnectionFactory.getOracleDBConnection();
+				PreparedStatement stmt=conn.prepareStatement(countSQL)	){
+				
+				try(ResultSet rs=stmt.executeQuery()){
+					while(rs.next()){
+						count = rs.getInt("count");
+					}
+				}catch(SQLException e){
+					throw e;
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		
+		return count;
+	}
+	
 	
 }

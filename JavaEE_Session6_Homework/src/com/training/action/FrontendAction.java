@@ -159,8 +159,8 @@ public class FrontendAction extends DispatchAction {
 		request.setAttribute("rowList", rowList);
 		
 		//與資料庫連線，找出商品項目，補滿六項
+		List<Goods> showGoods = frontEndService.showGoodsService(page,searchKeyword);
 		
-		List<Goods> showGoods = frontEndService.showGoodsService(page,searchKeyword);	
 		//避免JSTL顯示產生IndexOutOfBoundsException
 		while (showGoods.size()!=6){
 			showGoods.add(null);

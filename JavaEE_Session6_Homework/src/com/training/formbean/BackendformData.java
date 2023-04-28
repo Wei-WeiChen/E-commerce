@@ -13,7 +13,28 @@ public class BackendformData extends ActionForm{
 	private String queryStartDate;
 	private String queryEndDate;
 	private FormFile goodsImage;
+	private int currentPage;
+	private int totalPage;
+	private String[] rowList; 
 	
+	public int getCurrentPage() {
+		return currentPage;
+	}
+	public void setCurrentPage(int currentPage) {
+		this.currentPage = currentPage;
+	}
+	public int getTotalPage() {
+		return totalPage;
+	}
+	public void setTotalPage(int totalPage) {
+		this.totalPage = totalPage;
+	}
+	public String[] getRowList() {
+		return rowList;
+	}
+	public void setRowList(String[] rowList) {
+		this.rowList = rowList;
+	}
 	public int getGoodsID() {
 		return goodsID;
 	}

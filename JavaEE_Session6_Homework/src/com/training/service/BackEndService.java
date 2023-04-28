@@ -2,6 +2,7 @@ package com.training.service;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +27,7 @@ public class BackEndService {
 	}
 	
 	public Set<Goods> queryGoods() {
+		
 		return backendDao.queryGoods();
 	}
 	
@@ -59,6 +61,53 @@ public class BackEndService {
 		List<Goods> idGoods = backendDao.queryGoodById(ID);
 		return idGoods;
 	}
+
+	public Set<Goods> queryAllGoods() {
+		
+		return backendDao.queryAllGoods();
+	}
+
+	public List<Goods> showGoodsService(int page) {
+
+		return backendDao.returnPage(page);
+	}
+
+	public int goodsIcon() {
+		
+		return backendDao.goodsIcon();
+	}
+
+	//分頁處理
+	public static int pageService(String pageString, String hiddenpage) { //注意static
+		
+		int page=1;
+		if(pageString != null && !"".equals(pageString)){
+			page = Integer.parseInt(pageString);
+		}else if(hiddenpage != null && "".equals(hiddenpage)){
+			page = Integer.parseInt(hiddenpage);
+		}
+		return page;
+	}
+	//分頁
+	public static List<Integer> rowListService(int page, int countPage) {
+		int row = (page-1)/10;
+		List<Integer>rowList = new ArrayList<>();
+		int endPage = ((row+1)*10<=countPage)?(row+1)*10:countPage;
+		for(int i = row*10+1;i<=endPage;i++){
+			rowList.add(i);
+		}
+		return rowList;
+	}
+	
+	//每頁數量10筆
+	public static int countPageService(BackEndService backEndService) {
+		int count = backEndService.goodsIcon();
+		int countPage = (count%10 == 0)?count/10:(count/10)+1;
+		
+		return countPage;
+	}
+
+
 	
 
 	

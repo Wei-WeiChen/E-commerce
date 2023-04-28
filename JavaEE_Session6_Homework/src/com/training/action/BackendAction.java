@@ -34,6 +34,7 @@ import org.apache.struts.upload.FormFile;
 import com.training.model.Goods;
 import com.training.service.BackEndService;
 import com.training.formbean.BackendformData;
+import com.training.vo.BuyGoodsRtn;
 import com.training.vo.SalesReport;
 
 @MultipartConfig
@@ -45,13 +46,39 @@ public class BackendAction extends DispatchAction {
 	public ActionForward queryGoods(ActionMapping mapping, ActionForm form, 
             HttpServletRequest request, HttpServletResponse response) {
 		
-		HttpSession session = request.getSession();
-		session.removeAttribute("tempBuyMap");
-		System.out.println("移除暫存");
-		session.removeAttribute("countPage");
+		String pageString = request.getParameter("page");
+		String hiddenpage = request.getParameter("hiddenpage");
 		
-		Set<Goods> goods = backEndService.queryGoods();
-		request.setAttribute("goods", goods);
+		int page = BackEndService.pageService(pageString,hiddenpage);
+		request.setAttribute("page", page);
+		
+		//取出頁面的選項(session)
+		HttpSession session = request.getSession();
+		int countPage = 0;
+		if(session.getAttribute("countPage")!=null){
+			int count = backEndService.goodsIcon();
+			countPage = (count%10 == 0)? count/10:(count/10)+1;
+			session.setAttribute("countPage", countPage);
+		}	
+		
+		//是否可以選擇下一頁
+		int next = (countPage > page) ? 1 : 0;
+		request.setAttribute("next", next);
+		
+		//分頁排版
+		List<Integer> rowList = BackEndService.rowListService(page , countPage);
+		request.setAttribute("rowList", rowList);
+		
+		//與資料庫連線，找出商品項目，補滿六項
+		List<Goods> showGoodsBack = backEndService.showGoodsService(page);
+		
+		//避免JSTL顯示產生IndexOutOfBoundsException
+		while (showGoodsBack.size()!=10){
+			showGoodsBack.add(null);
+		}
+		request.setAttribute("showGoodsBack", showGoodsBack);
+					
+		
 		// 結束後顯示頁面
 		return mapping.findForward("goodListView");
 	}
@@ -61,7 +88,7 @@ public class BackendAction extends DispatchAction {
             HttpServletRequest request, HttpServletResponse response) throws Exception{
 		
 		// 商品選單資料
-		Set<Goods> goods = backEndService.queryGoods();
+		Set<Goods> goods = backEndService.queryAllGoods();
 		request.setAttribute("goods", goods);
 		// 被選擇要修改的帳號資料
 		String id = request.getParameter("goodsID");
@@ -136,8 +163,11 @@ public class BackendAction extends DispatchAction {
 		int createGood = backEndService.createGoods(goods);
 		
 		String message = (createGood!=0 && updateImg) ?"新增一項商品": "商品新增失敗";
+		
+		if(createGood!=0 && updateImg){
 			message += "<br/>商品ID:"+createGood+"<br/>商品名稱:"+goods.getGoodsName();
-				
+		}
+		 				
 		HttpSession session = request.getSession();
 		session.setAttribute("message", message);
 		session.removeAttribute("goods");

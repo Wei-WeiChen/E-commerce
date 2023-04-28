@@ -114,6 +114,7 @@
 							</c:forEach>						
 						</table>
 						<br/>
+						
 		<c:url value='FrontendAction.do?action=buyGoodsView' var="link">
 			<c:param name="page" value="${requestScope.page-1}"/>
 		</c:url>		
