@@ -107,6 +107,14 @@ public class BackEndService {
 		return countPage;
 	}
 
+	//AJAX使用
+	public Goods queryGoodsById(String id) {
+		
+		return backendDao.queryGoodsById(id);
+	}
+
+
+
 
 	
 

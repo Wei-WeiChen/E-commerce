@@ -3,6 +3,7 @@ package com.training.action;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -22,6 +23,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
+
+import net.sf.json.JSONObject;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -91,19 +94,44 @@ public class BackendAction extends DispatchAction {
 		Set<Goods> goods = backEndService.queryAllGoods();
 		request.setAttribute("goods", goods);
 		// 被選擇要修改的帳號資料
-		String id = request.getParameter("goodsID");
+		String id = (String)request.getSession().getAttribute("goodsID");
+		
 		if(id != null){
-			List<Goods> idGood = new ArrayList<>();
-			Goods good = new Goods();
-			good.setGoodsID(Integer.parseInt(id));
-			idGood.add(good);
-			Goods goodsUpdate = backEndService.queryGoodById(idGood).get(0);
-			request.setAttribute("updateGoods", goodsUpdate);
+			Goods good = backEndService.queryGoodsById(id);
+			request.setAttribute("updateGoods", good);
 		}
+		
+//		if(id != null){
+//			List<Goods> idGood = new ArrayList<>();
+//			Goods good = new Goods();
+//			good.setGoodsID(Integer.parseInt(id));
+//			idGood.add(good);
+//			Goods goodsUpdate = backEndService.queryGoodById(idGood).get(0);
+//			request.setAttribute("updateGoods", goodsUpdate);
+//		}
 		
 		return mapping.findForward("updateGoodsView");
 		
 	}
+	//AJAX
+    public ActionForward getUpdateGoods(ActionMapping mapping, ActionForm form, 
+            HttpServletRequest request, HttpServletResponse response) throws IOException {
+		
+		// 被選擇要修改的帳號資料		
+		String id = request.getParameter("id");
+		
+		Goods goods = backEndService.queryGoodsById(id);
+	
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("application/json");
+		PrintWriter out = response.getWriter();
+		out.println(JSONObject.fromObject(goods));
+		out.flush();
+		out.close();
+		
+    	return null;
+    }
+	
 	//商品維護作業的方法
 	public ActionForward updateGoods(ActionMapping mapping, ActionForm form, 
             HttpServletRequest request, HttpServletResponse response) throws Exception{
@@ -122,8 +150,20 @@ public class BackendAction extends DispatchAction {
 		session.setAttribute("message", message);
 		session.setAttribute("updateGoodsID", goods.getGoodsID());
 		
+	    // 構建回傳的 JSON 物件
+	    JSONObject jsonResponse = new JSONObject();
+	    jsonResponse.put("updateSuccess", updateSuccess);
+	    jsonResponse.put("message", message);
+	    jsonResponse.put("goodsID", goods.getGoodsID());
+
+	    // 設定回傳的內容類型為 JSON
+	    response.setContentType("application/json");
+	    response.getWriter().write(jsonResponse.toString());
+
+	    return null; // 因為使用 AJAX，不需要重新導向其他頁面
+		
 		//做完顯示回原本GoodsReplenishment頁面
-		return mapping.findForward("updateGoods");
+//		return mapping.findForward("updateGoods");
 	}
 	
 	//商品新增的重導頁面

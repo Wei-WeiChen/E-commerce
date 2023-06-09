@@ -130,7 +130,7 @@ public class BackEndDao {
 		boolean updateSuccess = false;
 		try (Connection conn= DBConnectionFactory.getOracleDBConnection()){
 			conn.setAutoCommit(false);
-			String updateSql="UPDATE BEVERAGE_GOODS SET PRICE=?,QUANTITY=QUANTITY+?,STATUS=? WHERE GOODS_ID=?";
+			String updateSql="UPDATE BEVERAGE_GOODS SET PRICE=?,QUANTITY=?,STATUS=? WHERE GOODS_ID=?";
 			
 			try(PreparedStatement stmt=conn.prepareStatement(updateSql)){
 //				stmt.setString(1, goods.getGoodsName());
@@ -307,6 +307,33 @@ public class BackEndDao {
 			}
 		
 		return count;
+	}
+
+	//AJAX
+	public Goods queryGoodsById(String id) {
+		Goods good = null;		
+		// querySQL SQL
+		String querySQL = "SELECT GOODS_ID, GOODS_NAME, PRICE, QUANTITY, STATUS FROM BEVERAGE_GOODS WHERE GOODS_ID = ?";		
+		// Step1:取得Connection
+		try (Connection conn = DBConnectionFactory.getOracleDBConnection();
+		    // Step2:Create prepareStatement For SQL
+			PreparedStatement stmt = conn.prepareStatement(querySQL)){
+			stmt.setString(1, id);
+			try(ResultSet rs = stmt.executeQuery()){
+				if(rs.next()){
+					good = new Goods();
+					good.setGoodsID(rs.getInt("GOODS_ID"));
+					good.setGoodsName(rs.getString("GOODS_NAME"));
+					good.setGoodsPrice(rs.getInt("PRICE"));
+					good.setGoodsQuantity(rs.getInt("QUANTITY"));
+					good.setStatus(rs.getString("STATUS"));
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return good;
 	}
 	
 	

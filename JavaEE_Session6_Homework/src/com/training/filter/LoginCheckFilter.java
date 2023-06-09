@@ -24,6 +24,7 @@ public class LoginCheckFilter implements Filter {
 		HttpServletRequest httpRequest = (HttpServletRequest)request;		
 		HttpSession session = httpRequest.getSession();
 		Account account = (Account) session.getAttribute("account");
+		
         // 如果存在就放行.
         if(account != null){
             chain.doFilter(request,response);

@@ -5,8 +5,17 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=BIG5">
 <title>VendingLogin</title>
+	<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
 	<script type="text/javascript">
-
+	    $(document).ready(function() {
+	        <%-- 取得登入錯誤訊息 --%>
+	        var message = "<%= session.getAttribute("message") %>";
+	        
+	        <%-- 若錯誤訊息存在，顯示alert --%>
+	        if (message) {
+	            alert(message);
+	        }
+	    });
 	</script>
 </head>
 <body>	

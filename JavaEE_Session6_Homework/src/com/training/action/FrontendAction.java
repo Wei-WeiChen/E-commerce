@@ -178,7 +178,7 @@ public class FrontendAction extends DispatchAction {
 		
 		HttpSession session = request.getSession();
 		Map<Integer,String>carGoods = new HashMap<>();
-		System.out.println("暫時購物清單");
+//		System.out.println("暫時購物清單");
 		
 		
 		int countPage = BuyGoodsRtn.countPageService(frontEndService,"");

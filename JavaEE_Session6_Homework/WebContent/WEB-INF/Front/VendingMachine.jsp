@@ -77,7 +77,7 @@
 									<br/>
 									<font face="微軟正黑體" size="4" style="color: gray;" >
 										<!-- EX:柳橙汁 10元/罐 -->
-										${requestScope.showGoods.get(item).goodsPrice} 元/罐
+										${requestScope.showGoods.get(item).goodsPrice} 元/份
 									</font>
 									
 									<!-- 各商品圖片 -->
@@ -91,13 +91,13 @@
 											<c:when test="${sessionScope.carGoods.containsKey(requestScope.showGoods.get(item).goodsID) eq true}">
 												購買<input type="number" name="buyQuantity" min="0" 
 												max="${requestScope.showGoods.get(item).goodsQuantity}" size="5" 
-												value="${sessionScope.carGoods.get(requestScope.showGoods.get(item).goodsID)}">罐
+												value="${sessionScope.carGoods.get(requestScope.showGoods.get(item).goodsID)}">份
 <!-- 												onchange="buyQuantityfun();" -->
 											</c:when>
 											<c:otherwise>
 												購買<input type="number" name="buyQuantity" min="0" 
 												max="${requestScope.showGoods.get(item).goodsQuantity}" size="5" 
-												value="0" >罐
+												value="0" >份
 <!-- 												onchange="buyQuantityfun();" -->
 											</c:otherwise>
 										</c:choose>
@@ -105,7 +105,7 @@
 										<!-- 顯示庫存數量 -->
 										<br>
 										<p style="color: red;">
-										(庫存 ${requestScope.showGoods.get(item).goodsQuantity} 罐)
+										(庫存 ${requestScope.showGoods.get(item).goodsQuantity} 份)
 										</p>
 									</font>	
 								</c:if>
